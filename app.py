@@ -1,3 +1,23 @@
+import os
+import nltk
+
+# Set NLTK data path for Render
+os.environ['NLTK_DATA'] = '/tmp/nltk_data'
+
+# Download required NLTK models on startup
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    print("Downloading NLTK punkt...")
+    nltk.download('punkt')
+
+try:
+    nltk.data.find('sentiment/vader_lexicon')
+except LookupError:
+    print("Downloading NLTK vader_lexicon...")
+    nltk.download('vader_lexicon')
+
+
 from flask import Flask, render_template, request, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
