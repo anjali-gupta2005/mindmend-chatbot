@@ -1,4 +1,7 @@
 import random
+from sklearn.feature_extraction.text import CountVectorizer  # ===== ADD: Scikit-learn =====
+from sklearn.metrics.pairwise import cosine_similarity  # ===== ADD: Scikit-learn =====
+import numpy as np  # ===== ADD: For ML calculations =====
 
 
 class ResourceRecommender:
@@ -314,7 +317,7 @@ class ResourceRecommender:
                     },
                     {
                         'title': 'Upbeat Motivational Music for Positive Vibes',
-                        'url': 'https://www.youtube.com/watch?v=ZXsQAXx_ao0',
+                        'url': 'https://www.youtube.com/watch?v=ZXsQAWx_ao0',
                         'type': 'motivational',
                         'duration': '30 min',
                         'description': 'Uplifting music compilation to boost your mood'
@@ -440,10 +443,54 @@ class ResourceRecommender:
             }
         }
     
-    def recommend_resources(self, emotion, mood_preference=None):
+    # ===== ADD: Smart resource matching using scikit-learn =====
+    def find_best_resources_sklearn(self, emotion, user_context=None):
+        """Use scikit-learn to intelligently match resources to user needs"""
+        try:
+            if emotion not in self.resources:
+                emotion = 'negative'
+            
+            resource_set = self.resources[emotion]
+            videos = resource_set.get('videos', [])
+            
+            # If user context provided, use ML for smart matching
+            if user_context and videos:
+                try:
+                    # Vectorize video descriptions
+                    video_texts = [
+                        v.get('title', '') + ' ' + v.get('description', '') 
+                        for v in videos
+                    ]
+                    
+                    vectorizer = CountVectorizer(stop_words='english', max_features=50)
+                    video_vectors = vectorizer.fit_transform(video_texts)
+                    
+                    # Vectorize user context
+                    context_vector = vectorizer.transform([user_context])
+                    
+                    # Calculate similarity using cosine similarity
+                    similarities = cosine_similarity(context_vector, video_vectors)[0]
+                    
+                    # Sort by similarity (highest first)
+                    sorted_indices = np.argsort(similarities)[::-1]
+                    
+                    # Return top matches
+                    best_videos = [videos[i] for i in sorted_indices[:5]]
+                    return best_videos
+                except:
+                    return random.sample(videos, min(5, len(videos)))
+            
+            return random.sample(videos, min(5, len(videos)))
+        except:
+            return []
+    # ===== END: Scikit-learn matching =====
+    
+    def recommend_resources(self, emotion, mood_preference=None, user_context=None):
         """
         Recommend resources based on emotion
         Returns: dict with videos, exercises, articles, and professional resources
+        
+        ===== UPDATED: Now with scikit-learn ML matching =====
         """
         
         if emotion not in self.resources:
@@ -451,25 +498,27 @@ class ResourceRecommender:
         
         resources = self.resources[emotion].copy()
         
+        # ===== ADD: Use ML-based resource matching =====
+        videos = self.find_best_resources_sklearn(emotion, user_context)
+        if not videos:
+            videos = resources.get('videos', [])
+        # ===== END: ML matching =====
+        
         # Filter videos by mood preference if specified
-        if mood_preference and 'videos' in resources:
+        if mood_preference and videos:
             filtered_videos = [
-                v for v in resources['videos'] 
-                if v['type'] == mood_preference
+                v for v in videos 
+                if v.get('type') == mood_preference
             ]
             
             if filtered_videos:
-                resources['videos'] = filtered_videos
+                videos = filtered_videos
         
         # Return selection of resources
         result = {}
         
-        if 'videos' in resources:
-            # Return 4-5 videos (increased for more variety)
-            result['videos'] = random.sample(
-                resources['videos'],
-                min(5, len(resources['videos']))
-            )
+        # Return 4-5 videos (increased for more variety)
+        result['videos'] = videos[:5] if videos else []
         
         if 'exercises' in resources:
             # Return 3-4 exercises with full details

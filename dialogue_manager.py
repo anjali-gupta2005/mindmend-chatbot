@@ -1,12 +1,21 @@
 import random
 import re
 from datetime import datetime
+import spacy  # ===== ADD: Spacy for NLP =====
 
 
 class DialogueManager:
     """Ultra-comprehensive dialogue manager that handles EVERY possible user scenario"""
     
     def __init__(self):
+        # ===== ADD: Spacy NLP setup =====
+        try:
+            self.nlp = spacy.load("en_core_web_sm")
+        except:
+            print("Warning: Spacy model not found. Run: python -m spacy download en_core_web_sm")
+            self.nlp = None
+        # ===== END: Spacy setup =====
+        
         self.sessions = {}
         
         # Expanded intent patterns covering ALL scenarios
@@ -218,6 +227,39 @@ class DialogueManager:
             ]
         }
     
+    # ===== ADD: Extract entities with spacy =====
+    def extract_entities_with_spacy(self, user_input):
+        """Extract important entities (people, organizations, etc.) using spacy"""
+        try:
+            if self.nlp is None:
+                return []
+            
+            doc = self.nlp(user_input)
+            entities = []
+            
+            for ent in doc.ents:
+                entities.append({
+                    'text': ent.text,
+                    'label': ent.label_  # PERSON, ORG, DATE, GPE, etc.
+                })
+            
+            return entities
+        except:
+            return []
+    
+    def extract_noun_chunks_with_spacy(self, user_input):
+        """Extract key noun phrases using spacy"""
+        try:
+            if self.nlp is None:
+                return []
+            
+            doc = self.nlp(user_input)
+            noun_chunks = [chunk.text for chunk in doc.noun_chunks]
+            return noun_chunks
+        except:
+            return []
+    # ===== END: Spacy extraction =====
+    
     def manage_conversation(self, user_id, user_input, sentiment_data):
         """Main conversation management"""
         
@@ -242,11 +284,22 @@ class DialogueManager:
         
         text_lower = user_input.lower()
         
+        # ===== ADD: Extract spacy entities =====
+        entities = self.extract_entities_with_spacy(user_input)
+        noun_chunks = self.extract_noun_chunks_with_spacy(user_input)
+        # ===== END: Spacy extraction =====
+        
         # Detect all matching intents
         intents = self._detect_all_intents(text_lower)
         
         # Generate response
         response = self._generate_smart_response(session, intents, sentiment_data, text_lower)
+        
+        # ===== ADD: Include spacy info in response =====
+        if isinstance(response, dict):
+            response['entities'] = entities
+            response['noun_chunks'] = noun_chunks
+        # ===== END: Add spacy info =====
         
         return response
     
