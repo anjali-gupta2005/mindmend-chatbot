@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - MindMend</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-left">
+                <h1>🧠 MindMend Admin Dashboard</h1>
+                <p>Manage users and monitor conversations</p>
+            </div>
+            <div class="header-right">
+                <span class="admin-badge">Admin</span>
+                <button class="btn-logout" id="logout-btn">Logout</button>
+            </div>
+        </header>
+
+        <!-- Stats Cards -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="total-users">-</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💬</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="total-conversations">-</div>
+                    <div class="stat-label">Total Conversations</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💌</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="total-messages">-</div>
+                    <div class="stat-label">Total Messages</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="users">👥 Users</button>
+            <button class="tab-btn" data-tab="conversations">💬 All Conversations</button>
+            <button class="tab-btn" data-tab="user-details">🔍 User Details</button>
+        </div>
+
+        <!-- Users Tab -->
+        <section class="tab-content active" id="users-tab">
+            <div class="section-header">
+                <h2>All Users</h2>
+                <input type="search" id="search-users" placeholder="Search users...">
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Registered</th>
+                            <th>Last Login</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <tr>
+                            <td colspan="7" class="loading">Loading users...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Conversations Tab -->
+        <section class="tab-content" id="conversations-tab">
+            <div class="section-header">
+                <h2>All Conversations</h2>
+                <input type="search" id="search-conversations" placeholder="Search conversations...">
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Title</th>
+                            <th>Messages</th>
+                            <th>Created</th>
+                            <th>Updated</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="conversations-table-body">
+                        <tr>
+                            <td colspan="8" class="loading">Loading conversations...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- User Details Tab -->
+        <section class="tab-content" id="user-details-tab">
+            <div class="section-header">
+                <h2>User Conversation History</h2>
+                <select id="user-select" class="user-select">
+                    <option value="">Select a user...</option>
+                </select>
+            </div>
+            <div id="user-detail-content" class="user-detail-content">
+                <p class="no-data">Select a user to view their conversations</p>
+            </div>
+        </section>
+
+        <!-- Conversation Detail Modal -->
+        <div id="conversation-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Conversation Details</h2>
+                    <button class="btn-close" id="close-modal">&times;</button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <!-- Messages will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

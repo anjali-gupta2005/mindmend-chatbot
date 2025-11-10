@@ -1,0 +1,38 @@
+/* Signup Page Styles - extends login.css */
+@import url('login.css');
+
+.password-strength {
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.password-strength-bar {
+    height: 100%;
+    width: 0;
+    transition: all 0.3s;
+    border-radius: 2px;
+}
+
+.password-strength-bar.weak {
+    width: 33%;
+    background: #f44336;
+}
+
+.password-strength-bar.medium {
+    width: 66%;
+    background: #ff9800;
+}
+
+.password-strength-bar.strong {
+    width: 100%;
+    background: #4caf50;
+}
+
+.password-hint {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 5px;
+}

@@ -42,23 +42,7 @@ body {
     opacity: 0.9;
 }
 
-.reset-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 8px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition: all 0.3s;
-}
 
-.reset-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
 
 /* Chat Container */
 .chat-container {

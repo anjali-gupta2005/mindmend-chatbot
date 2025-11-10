@@ -5,8 +5,7 @@ import spacy  # ===== ADD: Spacy for NLP =====
 
 
 class DialogueManager:
-    """Ultra-comprehensive dialogue manager that handles EVERY possible user scenario"""
-    
+   
     def __init__(self):
         # ===== ADD: Spacy NLP setup =====
         try:
@@ -229,7 +228,7 @@ class DialogueManager:
     
     # ===== ADD: Extract entities with spacy =====
     def extract_entities_with_spacy(self, user_input):
-        """Extract important entities (people, organizations, etc.) using spacy"""
+      
         try:
             if self.nlp is None:
                 return []
@@ -240,7 +239,7 @@ class DialogueManager:
             for ent in doc.ents:
                 entities.append({
                     'text': ent.text,
-                    'label': ent.label_  # PERSON, ORG, DATE, GPE, etc.
+                    'label': ent.label_  
                 })
             
             return entities
@@ -248,7 +247,7 @@ class DialogueManager:
             return []
     
     def extract_noun_chunks_with_spacy(self, user_input):
-        """Extract key noun phrases using spacy"""
+        
         try:
             if self.nlp is None:
                 return []
@@ -493,7 +492,7 @@ class DialogueManager:
                         f"{validation} {encouragement} {transition}", 'negative'
                     )
             
-            # First time saying sad - ask why (turn 1-2)
+           
             else:
                 return random.choice(self.responses['sad_initial'])
         
